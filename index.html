@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hisaab – Calculator Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--g900:#0a3d24;--g700:#0f7a43;--g600:#16a34a;--g500:#22c55e;--g200:#bbf7d0;--g100:#dcfce7;--g50:#f0fdf4;
+--bg:#f3faf6;--ink:#0f2a1c;--mut:#5f7d6c;--line:#e0eee5;--warn:#b45309;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;color:var(--ink);font-family:"Plus Jakarta Sans","Segoe UI",Roboto,Arial,sans-serif;line-height:1.5;
+background:radial-gradient(900px 420px at 100% -8%,#d6f5e2 0,transparent 60%),var(--bg)}
+button,input,select{font:inherit}
+a:focus-visible,input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--g600);outline-offset:2px}
+.ic{width:20px;height:20px;flex:none}
+.app{display:grid;grid-template-columns:268px 1fr;min-height:100vh}
+.side{position:sticky;top:0;height:100vh;overflow-y:auto;background:#fff;border-right:1px solid var(--line);padding:22px 14px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.2rem;padding:0 8px 18px}
+.logo{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--g500),var(--g700));color:#fff;display:grid;place-items:center;box-shadow:0 6px 14px rgba(22,163,74,.35);flex:none}
+.nv{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:12px;color:var(--ink);text-decoration:none;font-size:.9rem;font-weight:500}
+.nv .ic{width:18px;height:18px;color:var(--g700)}
+.nv:hover{background:var(--g50)}
+.nv.on{background:var(--g100);color:var(--g900);font-weight:700}
+.gl{margin:16px 12px 6px;font-size:.78rem;color:var(--mut);font-weight:600}
+.main{padding:28px 32px 40px;max-width:1100px;width:100%;min-width:0}
+.mbrand{display:none}
+.top{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.back{width:42px;height:42px;border-radius:14px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;color:var(--g700);text-decoration:none;flex:none}
+.top h1{margin:0;font-size:1.55rem;letter-spacing:-.02em;line-height:1.2}
+.top p{margin:2px 0 0;color:var(--mut);font-size:.9rem}
+.hero{border-radius:24px;padding:28px;color:#fff;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:8px;
+background:radial-gradient(500px 240px at 90% 0,rgba(255,255,255,.22),transparent 70%),linear-gradient(135deg,#0f7a43,#16a34a 60%,#22c55e);box-shadow:0 18px 40px -18px rgba(15,122,67,.6)}
+.hero h2{margin:0 0 8px;font-size:1.75rem;letter-spacing:-.02em;line-height:1.2;max-width:15ch}
+.hero p{margin:0 0 18px;opacity:.92;max-width:38ch}
+.btn{display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--g900);font-weight:700;text-decoration:none;padding:11px 18px;border-radius:14px}
+.sample{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.32);border-radius:18px;padding:16px 20px;align-self:flex-end;min-width:230px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.sample span{font-size:.78rem;opacity:.88;display:block}
+.sample b{font-size:1.9rem;display:block;margin:2px 0;line-height:1.2}
+.sec{display:flex;align-items:center;gap:8px;margin:26px 0 12px;font-size:1.05rem;font-weight:700}
+.sec .ic{color:var(--g600)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.tile{display:flex;gap:14px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;text-decoration:none;color:var(--ink);transition:transform .15s,box-shadow .15s,border-color .15s}
+.tile:hover{transform:translateY(-2px);border-color:var(--g200);box-shadow:0 10px 24px -12px rgba(15,122,67,.35)}
+.ti{width:46px;height:46px;border-radius:14px;background:var(--g100);color:var(--g700);display:grid;place-items:center;flex:none}
+.tile b{display:block;font-size:.95rem}
+.tile small{color:var(--mut);font-size:.8rem;line-height:1.35;display:block}
+.cgrid{display:grid;grid-template-columns:minmax(280px,380px) 1fr;gap:20px;align-items:start}
+.card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 12px 30px -22px rgba(15,122,67,.5);min-width:0}
+.card h3{margin:0 0 14px;font-size:1rem}
+.form{display:grid;gap:14px}
+label{display:flex;flex-direction:column;gap:6px;font-size:.82rem;color:var(--mut);font-weight:600}
+input,select{padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--g50);color:var(--ink);width:100%;font-weight:600}
+input:focus,select:focus{border-color:var(--g500);background:#fff;box-shadow:0 0 0 4px rgba(34,197,94,.15)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.stat{background:var(--g50);border:1px solid var(--line);border-radius:16px;padding:14px}
+.stat span{display:block;font-size:.78rem;color:var(--mut)}
+.stat b{font-size:1.15rem}
+.stat.hero-s{grid-column:1/-1;order:-1;background:linear-gradient(135deg,#0f7a43,#22c55e);color:#fff;border:0;padding:20px}
+.stat.hero-s span{color:#fff;opacity:.88}
+.stat.hero-s b{font-size:2rem;line-height:1.2}
+.split{display:flex;align-items:center;gap:24px;margin-top:20px;flex-wrap:wrap}
+.donut{width:140px;height:140px;position:relative;flex:none}
+.dc{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.dc b{font-size:1.25rem;line-height:1.1}
+.dc small{font-size:.7rem;color:var(--mut)}
+.lg{display:grid;gap:8px;font-size:.88rem}
+.lg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px}
+.err{color:var(--warn);background:#fffbeb;border-radius:12px;padding:12px 14px;font-size:.9rem;margin:0}
+.tablewrap{overflow-x:auto;margin-top:20px;max-height:300px;overflow-y:auto;border:1px solid var(--line);border-radius:14px}
+table{border-collapse:collapse;width:100%;font-size:.84rem}
+th,td{padding:9px 14px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{position:sticky;top:0;background:var(--g100);color:var(--g900)}
+.dock{display:none}
+@media (max-width:900px){
+ .app{display:block}.side{display:none}
+ .main{padding:16px 16px 124px}
+ .mbrand{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+ .mbrand small{display:block;color:var(--mut);font-size:.78rem;line-height:1.2}
+ .mbrand b{font-size:1.15rem}
+ .cgrid{grid-template-columns:1fr}
+ .hero{padding:22px}.hero h2{font-size:1.45rem}.sample{width:100%}
+ .tiles{grid-template-columns:1fr}
+ .top h1{font-size:1.3rem}
+ .dock{display:block;position:fixed;left:0;right:0;bottom:0;padding:0 12px calc(10px + env(safe-area-inset-bottom,0px));pointer-events:none;z-index:20}
+ .dock nav{pointer-events:auto;display:flex;justify-content:space-around;background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:26px;padding:8px 6px;box-shadow:0 18px 40px -12px rgba(10,61,36,.35)}
+ .dk{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;text-decoration:none;color:var(--mut);font-size:.68rem;font-weight:600}
+ .dk span{width:50px;height:32px;border-radius:16px;display:grid;place-items:center;transition:background .2s}
+ .dk .ic{width:22px;height:22px}
+ .dk.on{color:var(--g900)}
+ .dk.on span{background:linear-gradient(135deg,var(--g500),var(--g700));color:#fff;box-shadow:0 6px 14px rgba(22,163,74,.4)}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side" id="side" aria-label="Calculators"></aside>
+  <main class="main" id="main" aria-live="polite"></main>
+</div>
+<div class="dock"><nav id="dock" aria-label="Main"></nav></div>
+<script>
+// ---------- helpers ----------
+const inr = n => "₹" + Math.round(n).toLocaleString("en-IN");
+const num = n => (Math.round(n * 100) / 100).toLocaleString("en-IN");
+const COLORS = ["#0f766e", "#f59e0b", "#6366f1"];
+
+// each calculator: id, group, title, subtitle, fields, calc(values) -> {stats, split?, table?, error?}
+const calcs = [];
+function add(c){ calcs.push(c); }
+
+// ---------- LOANS ----------
+add({
+  id:"emi", group:"Loans", title:"EMI Calculator", sub:"Monthly instalment for a home, car or personal loan.",
+  fields:[
+    {k:"p", label:"Loan amount (₹)", v:2500000},
+    {k:"r", label:"Interest rate (% per year)", v:8.5, step:"0.01"},
+    {k:"y", label:"Tenure (years)", v:20, step:"0.5"}
+  ],
+  calc({p,r,y}){
+    const n = Math.round(y*12), i = r/1200;
+    if(p<=0||n<=0||r<0) return {error:"Enter a positive loan amount and tenure."};
+    const emi = i===0 ? p/n : p*i*Math.pow(1+i,n)/(Math.pow(1+i,n)-1);
+    const total = emi*n, interest = total-p;
+    // amortisation schedule, year by year
+    let bal=p, rows=[], yi=0, yp=0;
+    for(let m=1;m<=n;m++){
+      const int=bal*i, prin=emi-int; bal-=prin; yi+=int; yp+=prin;
+      if(m%12===0||m===n){ rows.push([`Year ${Math.ceil(m/12)}`, inr(yp), inr(yi), inr(Math.max(bal,0))]); yi=0; yp=0; }
+    }
+    return {
+      stats:[["Monthly EMI",inr(emi),1],["Total interest",inr(interest)],["Total payment",inr(total)]],
+      split:[["Principal",p],["Interest",interest]],
+      table:{head:["Period","Principal paid","Interest paid","Balance"],rows}
+    };
+  }
+});
+
+add({
+  id:"prepay", group:"Loans", title:"Loan Prepayment", sub:"See how much interest a part-payment saves you.",
+  fields:[
+    {k:"p", label:"Outstanding loan (₹)", v:2000000},
+    {k:"r", label:"Interest rate (% per year)", v:8.5, step:"0.01"},
+    {k:"y", label:"Remaining tenure (years)", v:15},
+    {k:"pre", label:"One-time prepayment (₹)", v:300000}
+  ],
+  calc({p,r,y,pre}){
+    const n=Math.round(y*12), i=r/1200;
+    if(p<=0||n<=0||pre<0||pre>=p) return {error:"Prepayment must be less than the outstanding loan."};
+    const emi = p*i*Math.pow(1+i,n)/(Math.pow(1+i,n)-1);
+    const oldInterest = emi*n-p;
+    // keep EMI same, find how many months remain after prepayment
+    const np = p-pre;
+    const newN = Math.ceil(Math.log(emi/(emi-np*i))/Math.log(1+i));
+    const newInterest = emi*newN-np;
+    return {stats:[
+      ["Current EMI",inr(emi)],
+      ["Interest saved",inr(oldInterest-newInterest),1],
+      ["Months saved",(n-newN)+" months"],
+      ["New tenure",Math.floor(newN/12)+" yr "+(newN%12)+" mo"]
+    ]};
+  }
+});
+
+add({
+  id:"afford", group:"Loans", title:"Loan Eligibility", sub:"Rough loan size you can carry from your income.",
+  fields:[
+    {k:"inc", label:"Monthly take-home income (₹)", v:80000},
+    {k:"emis", label:"Existing EMIs per month (₹)", v:10000},
+    {k:"r", label:"Interest rate (% per year)", v:8.75, step:"0.01"},
+    {k:"y", label:"Tenure (years)", v:20},
+    {k:"foir", label:"Max share of income for EMIs (%)", v:50}
+  ],
+  calc({inc,emis,r,y,foir}){
+    const room = inc*foir/100-emis, n=y*12, i=r/1200;
+    if(room<=0) return {error:"Existing EMIs already use up your limit."};
+    const loan = room*(Math.pow(1+i,n)-1)/(i*Math.pow(1+i,n));
+    return {stats:[["Affordable EMI",inr(room)],["Eligible loan amount",inr(loan),1]]};
+  }
+});
+
+// ---------- SAVINGS & INVESTMENTS ----------
+add({
+  id:"fd", group:"Savings", title:"FD Calculator", sub:"Maturity value of a fixed deposit.",
+  fields:[
+    {k:"p", label:"Deposit amount (₹)", v:500000},
+    {k:"r", label:"Interest rate (% per year)", v:7.1, step:"0.01"},
+    {k:"y", label:"Tenure (years)", v:5, step:"0.25"},
+    {k:"f", label:"Compounding", type:"select", v:4, options:[[1,"Yearly"],[2,"Half-yearly"],[4,"Quarterly"],[12,"Monthly"]]}
+  ],
+  calc({p,r,y,f}){
+    if(p<=0||y<=0) return {error:"Enter a positive amount and tenure."};
+    const m = p*Math.pow(1+r/(100*f), f*y);
+    return {
+      stats:[["Maturity amount",inr(m),1],["Interest earned",inr(m-p)],["Amount invested",inr(p)]],
+      split:[["Invested",p],["Interest",m-p]]
+    };
+  }
+});
+
+add({
+  id:"rd", group:"Savings", title:"RD Calculator", sub:"Recurring deposit with quarterly compounding.",
+  fields:[
+    {k:"d", label:"Monthly deposit (₹)", v:5000},
+    {k:"r", label:"Interest rate (% per year)", v:6.8, step:"0.01"},
+    {k:"m", label:"Tenure (months)", v:36}
+  ],
+  calc({d,r,m}){
+    if(d<=0||m<=0) return {error:"Enter a positive deposit and tenure."};
+    // banks compound quarterly; each instalment earns for its remaining months
+    let total=0;
+    for(let k=1;k<=m;k++){ total += d*Math.pow(1+r/400, ((m-k+1)/12)*4); }
+    const inv=d*m;
+    return {stats:[["Maturity amount",inr(total),1],["Interest earned",inr(total-inv)],["Total deposited",inr(inv)]],
+            split:[["Deposited",inv],["Interest",total-inv]]};
+  }
+});
+
+add({
+  id:"sip", group:"Savings", title:"SIP Calculator", sub:"Future value of a monthly mutual fund SIP.",
+  fields:[
+    {k:"d", label:"Monthly investment (₹)", v:10000},
+    {k:"r", label:"Expected return (% per year)", v:12, step:"0.1"},
+    {k:"y", label:"Duration (years)", v:15}
+  ],
+  calc({d,r,y}){
+    const n=y*12, i=r/1200;
+    if(d<=0||n<=0) return {error:"Enter a positive amount and duration."};
+    const fv = i===0 ? d*n : d*((Math.pow(1+i,n)-1)/i)*(1+i);
+    const inv=d*n;
+    return {stats:[["Future value",inr(fv),1],["Estimated gains",inr(fv-inv)],["Amount invested",inr(inv)]],
+            split:[["Invested",inv],["Gains",fv-inv]]};
+  }
+});
+
+add({
+  id:"lump", group:"Savings", title:"Lumpsum Calculator", sub:"Growth of a one-time investment.",
+  fields:[
+    {k:"p", label:"Investment (₹)", v:200000},
+    {k:"r", label:"Expected return (% per year)", v:11, step:"0.1"},
+    {k:"y", label:"Duration (years)", v:10}
+  ],
+  calc({p,r,y}){
+    const fv=p*Math.pow(1+r/100,y);
+    return {stats:[["Future value",inr(fv),1],["Estimated gains",inr(fv-p)]],split:[["Invested",p],["Gains",fv-p]]};
+  }
+});
+
+add({
+  id:"ppf", group:"Savings", title:"PPF Calculator", sub:"15-year Public Provident Fund, yearly deposits.",
+  fields:[
+    {k:"d", label:"Yearly deposit (₹, max 1,50,000)", v:150000},
+    {k:"r", label:"Interest rate (% per year)", v:7.1, step:"0.01"},
+    {k:"y", label:"Years (min 15)", v:15}
+  ],
+  calc({d,r,y}){
+    if(d>150000) return {error:"PPF allows at most ₹1,50,000 a year."};
+    if(y<15) return {error:"PPF has a minimum lock-in of 15 years."};
+    let bal=0;
+    for(let k=0;k<y;k++){ bal=(bal+d)*(1+r/100); }
+    return {stats:[["Maturity value",inr(bal),1],["Total deposited",inr(d*y)],["Interest earned",inr(bal-d*y)]],
+            split:[["Deposited",d*y],["Interest",bal-d*y]]};
+  }
+});
+
+add({
+  id:"inflation", group:"Savings", title:"Inflation Calculator", sub:"What today's money will be worth later.",
+  fields:[
+    {k:"a", label:"Amount today (₹)", v:100000},
+    {k:"r", label:"Inflation (% per year)", v:6, step:"0.1"},
+    {k:"y", label:"Years", v:10}
+  ],
+  calc({a,r,y}){
+    return {stats:[["Cost of same goods then",inr(a*Math.pow(1+r/100,y)),1],["Buying power of "+inr(a),inr(a/Math.pow(1+r/100,y))]]};
+  }
+});
+
+// ---------- INTEREST & TAX ----------
+add({
+  id:"si", group:"Interest & tax", title:"Simple Interest", sub:"Interest = principal × rate × time.",
+  fields:[
+    {k:"p", label:"Principal (₹)", v:100000},
+    {k:"r", label:"Rate (% per year)", v:8, step:"0.01"},
+    {k:"y", label:"Time (years)", v:3, step:"0.25"}
+  ],
+  calc({p,r,y}){
+    const i=p*r*y/100;
+    return {stats:[["Interest",inr(i),1],["Total amount",inr(p+i)]],split:[["Principal",p],["Interest",i]]};
+  }
+});
+
+add({
+  id:"ci", group:"Interest & tax", title:"Compound Interest", sub:"Interest on interest, with your choice of compounding.",
+  fields:[
+    {k:"p", label:"Principal (₹)", v:100000},
+    {k:"r", label:"Rate (% per year)", v:8, step:"0.01"},
+    {k:"y", label:"Time (years)", v:5, step:"0.25"},
+    {k:"f", label:"Compounding", type:"select", v:1, options:[[1,"Yearly"],[4,"Quarterly"],[12,"Monthly"],[365,"Daily"]]}
+  ],
+  calc({p,r,y,f}){
+    const a=p*Math.pow(1+r/(100*f),f*y);
+    return {stats:[["Total amount",inr(a),1],["Compound interest",inr(a-p)]],split:[["Principal",p],["Interest",a-p]]};
+  }
+});
+
+add({
+  id:"gst", group:"Interest & tax", title:"GST Calculator", sub:"Add or remove GST from a price.",
+  fields:[
+    {k:"a", label:"Amount (₹)", v:10000},
+    {k:"g", label:"GST rate", type:"select", v:18, options:[[5,"5%"],[12,"12%"],[18,"18%"],[28,"28%"]]},
+    {k:"m", label:"Amount is", type:"select", v:"ex", options:[["ex","Before GST"],["in","Including GST"]]}
+  ],
+  calc({a,g,m}){
+    const base = m==="ex" ? a : a/(1+g/100);
+    const tax = base*g/100;
+    return {stats:[["Price before GST",inr(base)],["GST",inr(tax)],["Final price",inr(base+tax),1],["CGST / SGST each",inr(tax/2)]]};
+  }
+});
+
+add({
+  id:"disc", group:"Interest & tax", title:"Discount Calculator", sub:"Final price after a percentage off.",
+  fields:[
+    {k:"a", label:"Original price (₹)", v:2499},
+    {k:"d", label:"Discount (%)", v:30}
+  ],
+  calc({a,d}){
+    return {stats:[["You save",inr(a*d/100)],["Final price",inr(a-a*d/100),1]]};
+  }
+});
+
+add({
+  id:"pct", group:"Interest & tax", title:"Percentage Calculator", sub:"Three common percentage questions.",
+  fields:[
+    {k:"a", label:"A", v:25},
+    {k:"b", label:"B", v:200}
+  ],
+  calc({a,b}){
+    return {stats:[
+      [`${num(a)}% of ${num(b)}`,num(a*b/100),1],
+      [`${num(a)} is what % of ${num(b)}`,b===0?"—":num(a/b*100)+"%"],
+      [`Change from ${num(a)} to ${num(b)}`,a===0?"—":num((b-a)/a*100)+"%"]
+    ]};
+  }
+});
+
+// ---------- HEALTH & EVERYDAY ----------
+add({
+  id:"bmi", group:"Everyday", title:"BMI Calculator", sub:"Body mass index from height and weight.",
+  fields:[
+    {k:"h", label:"Height (cm)", v:170},
+    {k:"w", label:"Weight (kg)", v:68}
+  ],
+  calc({h,w}){
+    if(h<=0||w<=0) return {error:"Height and weight must be above zero."};
+    const b=w/Math.pow(h/100,2);
+    const cat = b<18.5?"Underweight":b<25?"Healthy range":b<30?"Overweight":"Obese";
+    return {stats:[["Your BMI",num(b),1],["Category",cat]]};
+  }
+});
+
+add({
+  id:"age", group:"Everyday", title:"Age Calculator", sub:"Exact age on a given day.",
+  fields:[
+    {k:"dob", label:"Date of birth", type:"date", v:"1995-06-15"},
+    {k:"on", label:"Age on", type:"date", v:new Date().toISOString().slice(0,10)}
+  ],
+  calc({dob,on}){
+    const a=new Date(dob), b=new Date(on);
+    if(isNaN(a)||isNaN(b)||b<a) return {error:"Pick a valid birth date that is before the other date."};
+    let y=b.getFullYear()-a.getFullYear(), m=b.getMonth()-a.getMonth(), d=b.getDate()-a.getDate();
+    if(d<0){ m--; d+=new Date(b.getFullYear(), b.getMonth(), 0).getDate(); }
+    if(m<0){ y--; m+=12; }
+    const days=Math.floor((b-a)/864e5);
+    return {stats:[["Age",`${y}y ${m}m ${d}d`,1],["Total days lived",days.toLocaleString("en-IN")]]};
+  }
+});
+
+add({
+  id:"fuel", group:"Everyday", title:"Fuel Cost", sub:"Trip cost from distance and mileage.",
+  fields:[
+    {k:"km", label:"Distance (km)", v:450},
+    {k:"mi", label:"Mileage (km per litre)", v:16},
+    {k:"pr", label:"Fuel price (₹ per litre)", v:100}
+  ],
+  calc({km,mi,pr}){
+    if(mi<=0) return {error:"Mileage must be above zero."};
+    const l=km/mi;
+    return {stats:[["Trip cost",inr(l*pr),1],["Fuel needed",num(l)+" L"]]};
+  }
+});
+
+add({
+  id:"tip", group:"Everyday", title:"Bill Split", sub:"Split a bill with tip between friends.",
+  fields:[
+    {k:"b", label:"Bill (₹)", v:3200},
+    {k:"t", label:"Tip (%)", v:10},
+    {k:"n", label:"People", v:4}
+  ],
+  calc({b,t,n}){
+    if(n<1) return {error:"At least one person has to pay."};
+    const tot=b*(1+t/100);
+    return {stats:[["Each person pays",inr(tot/n),1],["Total with tip",inr(tot)]]};
+  }
+});
+
+// ---------- icons (24x24 line icons) ----------
+const ICONS = {
+  home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
+  bank:'<path d="M3 21h18M5 21V10M9 21V10M15 21V10M19 21V10M2 10l10-6 10 6z"/>',
+  trend:'<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
+  percent:'<path d="M19 5L5 19"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/>',
+  grid:'<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',
+  calendar:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/>',
+  down:'<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8.5 12.5L12 16l3.5-3.5"/>',
+  user:'<circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-7 7-7s7 3 7 7M16 11l2 2 4-4"/>',
+  lock:'<rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 018 0v3"/>',
+  repeat:'<path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 013-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 01-3 3H3"/>',
+  bars:'<path d="M5 20V11M12 20V4M19 20v-6"/>',
+  coins:'<ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>',
+  shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+  flame:'<path d="M12 3c1 4 5 5 5 10a5 5 0 01-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-6 1-9z"/>',
+  layers:'<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
+  receipt:'<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/>',
+  tag:'<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.3"/>',
+  calc:'<rect x="5" y="3" width="14" height="18" rx="3"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/>',
+  heart:'<path d="M12 21l-8-8a5 5 0 017-7l1 1 1-1a5 5 0 017 7z"/>',
+  person:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/>',
+  fuel:'<path d="M4 21V5a2 2 0 012-2h6a2 2 0 012 2v16M3 21h12M14 9h2a2 2 0 012 2v5a1.5 1.5 0 003 0V8l-3-3"/><path d="M7 8h4"/>',
+  users:'<circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6"/><path d="M16 4.5a3.5 3.5 0 010 7M22 20c0-3-2-5-4-5.5"/>',
+  back:'<path d="M15 5l-7 7 7 7"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>'
+};
+const ic = n => `<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]}</svg>`;
+
+const CALC_ICON = {emi:"calendar",prepay:"down",afford:"user",fd:"lock",rd:"repeat",sip:"bars",lump:"coins",ppf:"shield",
+  inflation:"flame",si:"percent",ci:"layers",gst:"receipt",disc:"tag",pct:"calc",bmi:"heart",age:"person",fuel:"fuel",tip:"users"};
+const GROUPS = [
+  {name:"Loans", short:"Loans", icon:"bank", blurb:"Plan repayments and check what you can borrow."},
+  {name:"Savings", short:"Savings", icon:"trend", blurb:"See how deposits and investments grow."},
+  {name:"Interest & tax", short:"Tax", icon:"percent", blurb:"Interest, GST, discounts and percentages."},
+  {name:"Everyday", short:"Daily", icon:"grid", blurb:"Health, age, travel and shared bills."}
+];
+const groupOf = c => GROUPS.findIndex(g => g.name === c.group);
+
+// ---------- routing: #home, #g0..#g3 (category), #emi (calculator) ----------
+const side = document.getElementById("side"), main = document.getElementById("main"), dock = document.getElementById("dock");
+function parse(){
+  const h = location.hash.replace("#","");
+  if(/^g\d$/.test(h) && GROUPS[+h[1]]) return {t:"cat", g:+h[1]};
+  const c = calcs.find(x => x.id === h);
+  return c ? {t:"calc", id:h, g:groupOf(c)} : {t:"home", g:-1};
+}
+let route = parse();
+window.addEventListener("hashchange", () => { route = parse(); draw(); window.scrollTo(0,0); });
+
+function draw(){ drawSide(); drawDock(); drawMain(); }
+
+function drawSide(){
+  side.innerHTML = `<div class="brand"><span class="logo">${ic("calc")}</span>Hisaab</div>
+    <a class="nv${route.t==="home"?" on":""}" href="#home">${ic("home")}Dashboard</a>` +
+    GROUPS.map(g => `<p class="gl">${g.name}</p>` + calcs.filter(c => c.group === g.name).map(c =>
+      `<a class="nv${route.t==="calc"&&route.id===c.id?" on":""}" href="#${c.id}">${ic(CALC_ICON[c.id])}${c.title}</a>`).join("")).join("");
+}
+
+function drawDock(){
+  const items = [{h:"home", i:"home", l:"Home", on:route.t==="home"}]
+    .concat(GROUPS.map((g,k) => ({h:"g"+k, i:g.icon, l:g.short, on:route.g===k})));
+  dock.innerHTML = items.map(x => `<a class="dk${x.on?" on":""}" href="#${x.h}"><span>${ic(x.i)}</span>${x.l}</a>`).join("");
+}
+
+const tile = c => `<a class="tile" href="#${c.id}"><span class="ti">${ic(CALC_ICON[c.id])}</span><div><b>${c.title}</b><small>${c.sub}</small></div></a>`;
+const tiles = g => `<div class="tiles">${calcs.filter(c => c.group === g.name).map(tile).join("")}</div>`;
+
+function drawMain(){
+  if(route.t === "home"){
+    const s = calcs[0].calc({p:2500000, r:8.5, y:20});
+    main.innerHTML = `<div class="mbrand"><span class="logo">${ic("calc")}</span><div><b>Hisaab</b><small>Money calculators</small></div></div>
+      <div class="top"><div><h1>Dashboard</h1><p>Pick a calculator and see results as you type.</p></div></div>
+      <div class="hero"><div><h2>Plan every rupee with confidence</h2><p>Loans, deposits, investments and everyday maths, all in one place.</p>
+        <a class="btn" href="#emi">Open EMI calculator ${ic("arrow")}</a></div>
+        <div class="sample"><span>Sample monthly EMI</span><b>${s.stats[0][1]}</b><span>on ₹25,00,000 at 8.5% for 20 years</span></div></div>` +
+      GROUPS.map(g => `<div class="sec">${ic(g.icon)}${g.name}</div>${tiles(g)}`).join("");
+    return;
+  }
+  if(route.t === "cat"){
+    const g = GROUPS[route.g];
+    main.innerHTML = `<div class="top"><a class="back" href="#home" aria-label="Back to dashboard">${ic("back")}</a><div><h1>${g.name}</h1><p>${g.blurb}</p></div></div>${tiles(g)}`;
+    return;
+  }
+  const c = calcs.find(x => x.id === route.id);
+  const fields = c.fields.map(f => {
+    if(f.type === "select")
+      return `<label>${f.label}<select id="f_${f.k}">${f.options.map(([v,t]) => `<option value="${v}"${String(v)===String(f.v)?" selected":""}>${t}</option>`).join("")}</select></label>`;
+    const type = f.type || "number";
+    const extra = type === "number" ? ` step="${f.step||"any"}" min="0" inputmode="decimal"` : "";
+    return `<label>${f.label}<input id="f_${f.k}" type="${type}" value="${f.v}"${extra}></label>`;
+  }).join("");
+  main.innerHTML = `<div class="top"><a class="back" href="#g${route.g}" aria-label="Back to ${GROUPS[route.g].name}">${ic("back")}</a><div><h1>${c.title}</h1><p>${c.sub}</p></div></div>
+    <div class="cgrid"><div class="card"><h3>Your numbers</h3><div class="form">${fields}</div></div>
+    <div class="card"><h3>Results</h3><div id="out"></div></div></div>`;
+  main.querySelectorAll("input,select").forEach(e => e.addEventListener("input", run));
+  run();
+
+  function run(){
+    const vals = {};
+    c.fields.forEach(f => {
+      const raw = main.querySelector("#f_" + f.k).value;
+      vals[f.k] = f.type === "date" ? raw : f.type === "select" ? (isNaN(raw) ? raw : Number(raw)) : parseFloat(raw);
+    });
+    const out = main.querySelector("#out");
+    if(c.fields.some(f => !f.type && isNaN(vals[f.k]))){ out.innerHTML = `<p class="err">Fill in every field with a number.</p>`; return; }
+    const res = c.calc(vals);
+    out.innerHTML = res.error ? `<p class="err">${res.error}</p>` : render(res);
+  }
+}
+
+function render(res){
+  let h = `<div class="stats">` + res.stats.map(([l,v,hero]) => `<div class="stat${hero?" hero-s":""}"><span>${l}</span><b>${v}</b></div>`).join("") + `</div>`;
+  if(res.split){
+    const t = res.split.reduce((s,x) => s + x[1], 0), a = res.split[0][1] / t * 100, b = 100 - a;
+    h += `<div class="split"><div class="donut"><svg viewBox="0 0 42 42" width="140" height="140" role="img" aria-label="${res.split[0][0]} ${a.toFixed(0)} percent, ${res.split[1][0]} ${b.toFixed(0)} percent">
+      <circle cx="21" cy="21" r="15.9155" fill="none" stroke="#86efac" stroke-width="5"/>
+      <circle cx="21" cy="21" r="15.9155" fill="none" stroke="#0f7a43" stroke-width="5" stroke-dasharray="${a} ${b}" stroke-dashoffset="25"/></svg>
+      <div class="dc"><b>${b.toFixed(0)}%</b><small>${res.split[1][0]}</small></div></div>
+      <div class="lg"><div><i style="background:#0f7a43"></i>${res.split[0][0]}<b>${a.toFixed(0)}%</b></div>
+      <div><i style="background:#86efac"></i>${res.split[1][0]}<b>${b.toFixed(0)}%</b></div></div></div>`;
+  }
+  if(res.table){
+    h += `<div class="tablewrap"><table><thead><tr>${res.table.head.map(x => `<th>${x}</th>`).join("")}</tr></thead><tbody>` +
+      res.table.rows.map(r => `<tr>${r.map(x => `<td>${x}</td>`).join("")}</tr>`).join("") + `</tbody></table></div>`;
+  }
+  return h;
+}
+
+draw();
+</script>
+</body>
+</html>
